@@ -3,7 +3,7 @@ module github.com/eser/blind-guardian
 go 1.23.5
 
 require (
-	github.com/eser/ajan v0.6.1
+	github.com/eser/ajan v0.6.2
 	github.com/spf13/cobra v1.8.1
 )
 
