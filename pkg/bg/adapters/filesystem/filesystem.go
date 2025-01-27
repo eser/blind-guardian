@@ -84,9 +84,25 @@ func (f *Filesystem) ListFiles(targetDir string, includeDotFiles bool) ([]string
 	return filteredFiles, nil
 }
 
-func (f *Filesystem) Diff(firstFile string, secondFile string) ([]string, error) {
-	diff := []string{}
+func (f *Filesystem) Cat(file string) ([]string, error) {
+	lines := []string{}
 
+	content, err := os.OpenFile(file, os.O_RDONLY, 0) //nolint:gosec
+	if err != nil {
+		return nil, fmt.Errorf("%w: %w", ErrFailedToReadFile, err)
+	}
+	defer content.Close() //nolint:errcheck
+
+	scanner := bufio.NewScanner(content)
+
+	for scanner.Scan() {
+		lines = append(lines, scanner.Text())
+	}
+
+	return lines, nil
+}
+
+func (f *Filesystem) Diff(firstFile string, secondFile string) ([]string, error) {
 	firstContent, err := os.OpenFile(firstFile, os.O_RDONLY, 0) //nolint:gosec
 	if err != nil {
 		return nil, fmt.Errorf("%w: %w", ErrFailedToReadFile, err)
@@ -102,15 +118,17 @@ func (f *Filesystem) Diff(firstFile string, secondFile string) ([]string, error)
 	firstScanner := bufio.NewScanner(firstContent)
 	secondScanner := bufio.NewScanner(secondContent)
 
-	for firstScanner.Scan() {
-		currentLine := firstScanner.Text()
+	diff := []string{}
 
-		for secondScanner.Scan() {
-			if currentLine == secondScanner.Text() {
+	for secondScanner.Scan() {
+		currentLine := secondScanner.Text()
+
+		for firstScanner.Scan() {
+			if currentLine == firstScanner.Text() {
 				break
 			}
 
-			diff = append(diff, secondScanner.Text())
+			diff = append(diff, firstScanner.Text())
 		}
 	}
 

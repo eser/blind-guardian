@@ -19,7 +19,9 @@ type Filesystem interface {
 	Exists(targetFile string) (bool, error)
 	WriteToFile(targetFile string, content io.Reader) (func() error, error)
 	ListFiles(targetDir string, includeDotFiles bool) ([]string, error)
-	Diff(sourceFile string, targetFile string) ([]string, error)
+
+	Cat(file string) ([]string, error)
+	Diff(firstFile string, secondFile string) ([]string, error)
 }
 
 type Service struct {
@@ -78,12 +80,22 @@ func (s *Service) Diff(ctx context.Context) error {
 		return err
 	}
 
-	output, err := s.filesystem.Diff(files[1], files[0])
+	if len(files) < 1 {
+		return nil
+	}
+
+	var lines []string
+	if len(files) == 1 {
+		lines, err = s.filesystem.Cat(files[0])
+	} else {
+		lines, err = s.filesystem.Diff(files[0], files[1])
+	}
+
 	if err != nil {
 		return fmt.Errorf("%w: %w", ErrUpdateFailed, err)
 	}
 
-	for _, line := range output {
+	for _, line := range lines {
 		fmt.Println(line) //nolint:forbidigo
 	}
 
@@ -97,7 +109,7 @@ func (s *Service) getLatestFiles() ([]string, error) {
 	}
 
 	if len(files) < 2 { //nolint:gomnd,mnd
-		return nil, fmt.Errorf("%w: not enough files", ErrUpdateFailed)
+		return files, nil
 	}
 
 	// Sort files in descending order to get latest files first
