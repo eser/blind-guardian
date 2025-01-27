@@ -1,0 +1,33 @@
+version: "2"
+
+plugins:
+- name: golang
+  wasm:
+    url: file://./bin/sqlc-gen-go.wasm
+    sha256: ""
+
+sql:
+  - engine: "mysql"
+    queries: "etc/data/queries/domain_blocklist.sql"
+    schema: "etc/data/migrations"
+    rules:
+      - sqlc/db-prepare
+    codegen:
+      - plugin: golang
+        out: "pkg/bg"
+        options:
+          module: "github.com/eser/blind-guardian/pkg/bg"
+          sql_package: "database/sql"
+          initialisms: []
+          emit_empty_slices: true
+          emit_nil_records: true
+          emit_json_tags: true
+          emit_sql_as_comment: true
+          emit_result_struct_pointers: true
+          json_tags_case_style: "camel"
+          output_models_package: "domain_blocklist"
+          output_models_file_name: "business/domain_blocklist/types.go"
+          output_db_package: "storage"
+          output_db_file_name: "adapters/storage/db.go"
+          output_files_package: "storage"
+          output_files_prefix: "adapters/storage/"

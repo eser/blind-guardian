@@ -1,0 +1,22 @@
+version: 2
+
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "deps(gh-actions): "
+      include: "scope"
+    labels:
+      - "dependencies"
+
+  - package-ecosystem: "gomod"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "deps(gomod): "
+      include: "scope"
+    labels:
+      - "dependencies"
