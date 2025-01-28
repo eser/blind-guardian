@@ -107,6 +107,7 @@ func (f *Filesystem) Diff(firstFile string, secondFile string) ([]string, error)
 	if err != nil {
 		return nil, fmt.Errorf("%w: %w", ErrFailedToReadFile, err)
 	}
+
 	defer firstContent.Close() //nolint:errcheck
 
 	secondContent, err := os.OpenFile(secondFile, os.O_RDONLY, 0) //nolint:gosec
@@ -118,18 +119,26 @@ func (f *Filesystem) Diff(firstFile string, secondFile string) ([]string, error)
 	firstScanner := bufio.NewScanner(firstContent)
 	secondScanner := bufio.NewScanner(secondContent)
 
+	firstCheck := firstScanner.Scan()
+	firstLine := firstScanner.Text()
+	secondCheck := secondScanner.Scan()
+	secondLine := secondScanner.Text()
+
 	diff := []string{}
 
-	for secondScanner.Scan() {
-		currentLine := secondScanner.Text()
+	for firstCheck {
+		if secondCheck && firstLine == secondLine {
+			firstCheck = firstScanner.Scan()
+			firstLine = firstScanner.Text()
+			secondCheck = secondScanner.Scan()
+			secondLine = secondScanner.Text()
 
-		for firstScanner.Scan() {
-			if currentLine == firstScanner.Text() {
-				break
-			}
-
-			diff = append(diff, firstScanner.Text())
+			continue
 		}
+
+		diff = append(diff, firstLine)
+		firstCheck = firstScanner.Scan()
+		firstLine = firstScanner.Text()
 	}
 
 	return diff, nil

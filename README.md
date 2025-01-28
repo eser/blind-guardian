@@ -36,6 +36,26 @@ your fork, and then submit a pull request.
 
 - Golang 1.23 or higher (https://go.dev/)
 
+### Usage
+
+To get started with blind-guardian, follow these steps:
+
+1. Initialize the project:
+```bash
+make init
+```
+
+2. Update the disposable email domain blocklist:
+```bash
+bg update           # Normal update
+bg update --force   # Force update regardless of last update time
+```
+
+3. Compare differences between the last two updates:
+```bash
+bg diff
+```
+
 ### Versioning
 
 This project follows [Semantic Versioning](https://semver.org/). For the
