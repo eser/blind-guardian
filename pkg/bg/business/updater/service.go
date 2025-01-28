@@ -21,7 +21,7 @@ type Filesystem interface {
 	ListFiles(targetDir string, includeDotFiles bool) ([]string, error)
 
 	Cat(file string) ([]string, error)
-	Diff(firstFile string, secondFile string) ([]string, error)
+	Diff(newestFile string, previousFile string) ([]string, error)
 }
 
 type Service struct {
@@ -31,7 +31,11 @@ type Service struct {
 	filesystem Filesystem
 }
 
-var ErrUpdateFailed = errors.New("update failed")
+var (
+	ErrUpdateFailed              = errors.New("update failed")
+	ErrBothFilesShouldBeProvided = errors.New("newest and previous files should be provided both or none")
+	ErrNoFilesFound              = errors.New("no files found")
+)
 
 func NewService(config *UpdateConfig, logger *slog.Logger, fetcher Fetcher, filesystem Filesystem) *Service { //nolint:lll
 	return &Service{config: config, logger: logger, fetcher: fetcher, filesystem: filesystem}
@@ -74,18 +78,33 @@ func (s *Service) Update(ctx context.Context, force bool) error {
 	return nil
 }
 
-func (s *Service) Diff(ctx context.Context) error {
-	files, err := s.getLatestFiles()
-	if err != nil {
-		return err
-	}
+func (s *Service) Diff(ctx context.Context, newestFile string, previousFile string) error { //nolint:cyclop
+	files := []string{newestFile, previousFile}
 
-	if len(files) < 1 {
-		return nil
+	if files[0] == "" || files[1] == "" { //nolint:nestif
+		latestFiles, err := s.getLatestFiles()
+		if err != nil {
+			return err
+		}
+
+		if files[0] == "" {
+			if len(latestFiles) < 1 {
+				return ErrNoFilesFound
+			}
+
+			files[0] = latestFiles[0]
+		}
+
+		if files[1] == "" && len(latestFiles) > 1 {
+			files[1] = latestFiles[1]
+		}
 	}
 
 	var lines []string
-	if len(files) == 1 {
+
+	var err error
+
+	if files[1] == "" {
 		lines, err = s.filesystem.Cat(files[0])
 	} else {
 		lines, err = s.filesystem.Diff(files[0], files[1])

@@ -12,19 +12,26 @@ import (
 )
 
 func CmdDiff() *cobra.Command {
+	var newestFile string
+
+	var previousFile string
+
 	cmd := &cobra.Command{ //nolint:exhaustruct
 		Use:   "diff",
 		Short: "Diffs two blocklists",
 		Long:  `Diffs two blocklists`,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return runDiff(cmd.Context())
+			return runDiff(cmd.Context(), newestFile, previousFile)
 		},
 	}
+
+	cmd.Flags().StringVar(&newestFile, "newest", "", "Newest file path")
+	cmd.Flags().StringVar(&previousFile, "previous", "", "Previous file path")
 
 	return cmd
 }
 
-func runDiff(ctx context.Context) error {
+func runDiff(ctx context.Context, newestFile, previousFile string) error {
 	appConfig, err := bg.Init()
 	if err != nil {
 		return err //nolint:wrapcheck
@@ -35,7 +42,7 @@ func runDiff(ctx context.Context) error {
 
 	updater := updater.NewService(&appConfig.Update, slog.Default(), fetcher, filesystem)
 
-	err = updater.Diff(ctx)
+	err = updater.Diff(ctx, newestFile, previousFile)
 	if err != nil {
 		return err //nolint:wrapcheck
 	}

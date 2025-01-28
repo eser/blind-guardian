@@ -102,43 +102,43 @@ func (f *Filesystem) Cat(file string) ([]string, error) {
 	return lines, nil
 }
 
-func (f *Filesystem) Diff(firstFile string, secondFile string) ([]string, error) {
-	firstContent, err := os.OpenFile(firstFile, os.O_RDONLY, 0) //nolint:gosec
+func (f *Filesystem) Diff(newestFile string, previousFile string) ([]string, error) {
+	newestFilePtr, err := os.OpenFile(newestFile, os.O_RDONLY, 0) //nolint:gosec
 	if err != nil {
 		return nil, fmt.Errorf("%w: %w", ErrFailedToReadFile, err)
 	}
 
-	defer firstContent.Close() //nolint:errcheck
+	defer newestFilePtr.Close() //nolint:errcheck
 
-	secondContent, err := os.OpenFile(secondFile, os.O_RDONLY, 0) //nolint:gosec
+	previousFilePtr, err := os.OpenFile(previousFile, os.O_RDONLY, 0) //nolint:gosec
 	if err != nil {
 		return nil, fmt.Errorf("%w: %w", ErrFailedToReadFile, err)
 	}
-	defer secondContent.Close() //nolint:errcheck
+	defer previousFilePtr.Close() //nolint:errcheck
 
-	firstScanner := bufio.NewScanner(firstContent)
-	secondScanner := bufio.NewScanner(secondContent)
+	newestScanner := bufio.NewScanner(newestFilePtr)
+	previousScanner := bufio.NewScanner(previousFilePtr)
 
-	firstCheck := firstScanner.Scan()
-	firstLine := firstScanner.Text()
-	secondCheck := secondScanner.Scan()
-	secondLine := secondScanner.Text()
+	newestCheck := newestScanner.Scan()
+	newestLine := newestScanner.Text()
+	previousCheck := previousScanner.Scan()
+	previousLine := previousScanner.Text()
 
 	diff := []string{}
 
-	for firstCheck {
-		if secondCheck && firstLine == secondLine {
-			firstCheck = firstScanner.Scan()
-			firstLine = firstScanner.Text()
-			secondCheck = secondScanner.Scan()
-			secondLine = secondScanner.Text()
+	for newestCheck {
+		if previousCheck && newestLine == previousLine {
+			newestCheck = newestScanner.Scan()
+			newestLine = newestScanner.Text()
+			previousCheck = previousScanner.Scan()
+			previousLine = previousScanner.Text()
 
 			continue
 		}
 
-		diff = append(diff, firstLine)
-		firstCheck = firstScanner.Scan()
-		firstLine = firstScanner.Text()
+		diff = append(diff, newestLine)
+		newestCheck = newestScanner.Scan()
+		newestLine = newestScanner.Text()
 	}
 
 	return diff, nil

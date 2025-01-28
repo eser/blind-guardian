@@ -1,9 +1,29 @@
-# 🧢 blind-guardian
+# 🦯 blind-guardian
 
 [![codecov](https://codecov.io/gh/eser/blind-guardian/branch/main/graph/badge.svg?token=w6s3ODtULz)](https://codecov.io/gh/eser/blind-guardian)
 [![Build Pipeline](https://github.com/eser/blind-guardian/actions/workflows/build.yml/badge.svg)](https://github.com/eser/blind-guardian/actions/workflows/build.yml)
 
 `blind-guardian` project maintains safety lists for now, its scope can be changed in near future.
+
+## Usage
+
+To get started with blind-guardian, follow these steps:
+
+1. Initialize the project:
+```bash
+make init
+```
+
+2. Update the disposable email domain blocklist:
+```bash
+bg update           # Normal update
+bg update --force   # Force update regardless of last update time
+```
+
+3. Compare differences between the last two updates:
+```bash
+bg diff
+```
 
 ## 🙋🏻 FAQ
 
@@ -35,26 +55,6 @@ your fork, and then submit a pull request.
 ### Requirements
 
 - Golang 1.23 or higher (https://go.dev/)
-
-### Usage
-
-To get started with blind-guardian, follow these steps:
-
-1. Initialize the project:
-```bash
-make init
-```
-
-2. Update the disposable email domain blocklist:
-```bash
-bg update           # Normal update
-bg update --force   # Force update regardless of last update time
-```
-
-3. Compare differences between the last two updates:
-```bash
-bg diff
-```
 
 ### Versioning
 
