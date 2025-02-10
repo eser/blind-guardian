@@ -1,8 +1,8 @@
 github.com/cpuguy83/go-md2man/v2 v2.0.4/go.mod h1:tgQtvFlXSQOSOSIRvRPT7W67SCa46tRHOmNcaadrF8o=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
-github.com/eser/ajan v0.6.2 h1:0yEdipdcd2m5b49pHCQuqJhQQ5q8tk6YIi6RruvfL/M=
-github.com/eser/ajan v0.6.2/go.mod h1:DWosbI5jmweF7oDISlLyISnvLgFQ5IkyIIdS2ZOLbMA=
+github.com/eser/ajan v0.6.10 h1:cdjdMJawTdPuptcO36B7vqkAAyR69KLyKUfMEpI32Uk=
+github.com/eser/ajan v0.6.10/go.mod h1:hq11hx3kXTRSz0fUs/1rj+uve+eh434btETVHsa0Pec=
 github.com/inconshreveable/mousetrap v1.1.0 h1:wN+x4NVGpMsO7ErUn/mUI3vEoE6Jt13X2s0bqwp9tc8=
 github.com/inconshreveable/mousetrap v1.1.0/go.mod h1:vpF70FUmC8bwa3OWnCshd2FqLfsEA9PFc4w1p2J65bw=
 github.com/lib/pq v1.10.9 h1:YXG7RB+JIjhP29X+OtkiDnYaXQwpS4JEWq7dtCCRUEw=
